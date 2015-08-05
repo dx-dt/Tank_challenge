@@ -14,6 +14,11 @@ class Tank:
         Placeholder for now.
         """
         pass
+    def update(self):
+        """
+        Updates everyting associated with the tank each server tick.
+        """
+        pass
 
 class TestTank(unittest.TestCase):
     """
@@ -38,4 +43,4 @@ class Solution:
         """
         Method that is run by the server each tick.
         """
-        pass
+        self.tank.update()
