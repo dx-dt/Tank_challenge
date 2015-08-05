@@ -14,6 +14,14 @@ class Fuel:
         """
         self.old_fuel = None
         self.current_fuel = None
+    def delta(self):
+        """
+        Method that returns the fuel difference since last server tick.
+        """
+        if self.old_fuel and self.currenf_fuel:
+            return self.old_fuel - self.current_fuel
+        else:
+            return None
     def update(self):
         """
         Method that updates the fuel levels each tick.
@@ -21,11 +29,19 @@ class Fuel:
         self.old_fuel = self.current_fuel
         self.current_fuel = api.current_fuel()
 
-class testFuel(unittest.TestCase):
+class TestFuel(unittest.TestCase):
     """
     Unit test for Fuel class.
     Placeholder for now.
     """
+    def testDelta(self):
+        """
+        Unit test that asserts delta method subtraction is... subtracting.
+        """
+        self.fuel = Fuel()
+        self.fuel.old_fuel = 3
+        self.fuel.current_fuel = 2
+        self.assertEqual(self.fuel.delta(), 1)
 
 class Tank:
     """
@@ -67,5 +83,4 @@ class Solution:
         """
         Method that is run by the server each tick.
         """
-        print(self.tank.fuel.current_fuel)
         self.tank.update()
