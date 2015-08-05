@@ -28,6 +28,7 @@ class Solution:
     def __init__(self):
         """
         Method that initialises Solution class.
+        Instantiates Tank class.
         If global variable 'testing' is true, runs unit tests.
         """
         if testing:
