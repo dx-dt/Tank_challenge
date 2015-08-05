@@ -32,7 +32,7 @@ class Fuel:
 class TestFuel(unittest.TestCase):
     """
     Unit test for Fuel class.
-    Placeholder for now.
+    Tests delta method.
     """
     def testDelta(self):
         """
@@ -51,7 +51,7 @@ class Tank:
     def __init__(self):
         """
         Method that initialises Tank class.
-        Placeholder for now.
+        Instantiates Fuel class.
         """
         self.fuel = Fuel()
     def update(self):
