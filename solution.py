@@ -1,4 +1,7 @@
+testing = False
+
 import api
+import unittest
 
 class Solution:
     """
@@ -7,9 +10,10 @@ class Solution:
     def __init__(self):
         """
         Method that initialises Solution class.
-        Place holder for now.
+        If global variable 'testing' is true, runs unit tests.
         """
-        pass
+        if testing:
+            unittest.main("solution")
 
     def update(self):
         """
