@@ -99,10 +99,12 @@ class Tank:
         last hit, false otherwise.
         """
 
-        if self.fuel.delta() > 50:
-            return True
-        else:
+        if not self.fuel.delta():
             return False
+        elif self.fuel.delta() < 50:
+            return False
+        else:
+            return True
 
     def update(self):
 
