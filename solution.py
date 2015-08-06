@@ -1,4 +1,4 @@
-testing = False
+TESTING = False
 
 import api
 import unittest
@@ -158,8 +158,9 @@ class Solution:
         If global variable 'testing' is true, runs unit tests.
         """
 
-        if testing:
+        if TESTING:
             unittest.main("solution")
+
         self.tank = Tank()
 
     def update(self):
