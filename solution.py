@@ -5,6 +5,30 @@ import unittest
 import unittest.mock
 
 
+class Behaviour:
+
+    """
+    Class for handling the tank's behaviour.
+    """
+
+    def __init__(self):
+
+        """
+        Method that initialises Behaviour class.
+        Declares variable current.
+        """
+
+        self.current = 'roaming'
+        
+
+class testBehaviour(unittest.TestCase):
+
+    """
+    Unit tests for Behaviour class.
+    Placeholder for now.
+    """
+
+
 class Fuel:
 
     """
