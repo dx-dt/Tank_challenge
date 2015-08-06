@@ -2,6 +2,7 @@ testing = False
 
 import api
 import unittest
+import unittest.mock
 
 class Fuel:
     """
@@ -42,6 +43,18 @@ class TestFuel(unittest.TestCase):
         self.fuel.old_fuel = 3
         self.fuel.current_fuel = 2
         self.assertEqual(self.fuel.delta(), 1)
+    def testUpdate(self):
+        """
+        Unit test that asserts update method is updating variables correctly.
+        """
+        mock = unittest.mock.MagicMock(return_value = 1)
+        with unittest.mock.patch('api.current_fuel', mock):
+            self.fuel = Fuel()
+            self.fuel.current_fuel = 2
+            self.fuel.old_fuel = 3
+            self.fuel.update()
+            self.assertEqual(self.fuel.old_fuel, 2)
+            self.assertEqual(self.fuel.current_fuel, 1)
 
 class Tank:
     """
