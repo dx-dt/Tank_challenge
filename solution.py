@@ -34,6 +34,7 @@ class TestFuel(unittest.TestCase):
     """
     Unit test for Fuel class.
     Tests delta method.
+    Tests update method.
     """
     def testDelta(self):
         """
