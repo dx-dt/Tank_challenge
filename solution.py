@@ -138,6 +138,11 @@ class TestTank(unittest.TestCase):
             self.tank = Tank()
             self.assertTrue(self.tank.damage())
 
+        mock = unittest.mock.MagicMock(return_value = None)
+        with unittest.mock.patch('solution.Fuel.delta', mock):
+            self.tank = Tank()
+            self.assertFalse(self.tank.damage())
+
 
 class Solution:
 
