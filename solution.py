@@ -1,6 +1,7 @@
 TESTING = False
 
 import api
+import random
 import unittest
 import unittest.mock
 
@@ -15,10 +16,15 @@ class Behaviour:
 
         """
         Method that initialises Behaviour class.
+        Seeds pseudo random number generator.
         Declares variable current.
         """
 
+        random.seed(4) # Chosen by fair dice roll, guaranteed to be random ;)
+
         self.current = 'roaming'
+        self.turning_ratio = 1/10
+        self.random_limit = 2 * (1/self.turning_ratio)
 
     def roam(self):
 
@@ -27,7 +33,25 @@ class Behaviour:
         Placeholder for now.
         """
 
-        pass
+        if random.randint(0, self.random_limit) == 0:
+            api.turn_left()
+            return "Left turn."
+        elif random.randint(0, self.random_limit) == 1:
+            api.turn_right()
+            return "Right turn."
+        else:
+            api.move_forward()
+            return "Steady as she goes."
+
+    def update(self):
+
+        """
+        Method that executes selected behaviour each server tick.
+        """
+
+        if self.current == 'roaming':
+            self.roam()
+            return "Executed roaming method."
 
 
 class testBehaviour(unittest.TestCase):
@@ -45,7 +69,6 @@ class testBehaviour(unittest.TestCase):
         """
 
         pass
-        
 
 class Fuel:
 
@@ -129,10 +152,11 @@ class Tank:
 
         """
         Method that initialises Tank class.
-        Instantiates Fuel class.
+        Instantiates Fuel and Behaviour classes.
         """
 
         self.fuel = Fuel()
+        self.behaviour = Behaviour()
 
     def damage(self):
 
