@@ -19,7 +19,16 @@ class Behaviour:
         """
 
         self.current = 'roaming'
-        
+
+    def roam(self):
+
+        """
+        Method that executes roaming behaviour.
+        Placeholder for now.
+        """
+
+        pass
+
 
 class testBehaviour(unittest.TestCase):
 
@@ -28,6 +37,15 @@ class testBehaviour(unittest.TestCase):
     Placeholder for now.
     """
 
+    def testRoam(self):
+
+        """
+        Unit test for roam method.
+        Placeholder for now.
+        """
+
+        pass
+        
 
 class Fuel:
 
