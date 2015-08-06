@@ -1,4 +1,4 @@
-TESTING = False
+TESTING = True
 
 import api
 import random
@@ -17,7 +17,7 @@ class Behaviour:
         """
         Method that initialises Behaviour class.
         Seeds pseudo random number generator.
-        Declares variable current.
+        Declares variables current, turning ratio and random limit.
         """
 
         random.seed(4) # Chosen by fair dice roll, guaranteed to be random ;)
@@ -30,13 +30,17 @@ class Behaviour:
 
         """
         Method that executes roaming behaviour.
-        Placeholder for now.
+        Decides what to do based on randomness, with the chance
+        of turning decided by the turnin ratio from the behaviour
+        class.
         """
-        self.random_number = random.randint(0, self.random_limit)
-        if self.random_number == 0:
+
+        random_number = random.randint(0, self.random_limit)
+
+        if random_number == 0:
             api.turn_left()
             return "Left turn."
-        elif self.random_number  == 1:
+        elif random_number  == 1:
             api.turn_right()
             return "Right turn."
         else:
@@ -53,21 +57,23 @@ class Behaviour:
             self.roam()
             return "Executed roaming method."
 
+
 @unittest.mock.patch('solution.api')
 class testBehaviour(unittest.TestCase):
 
     """
     Unit tests for Behaviour class.
-    Placeholder for now.
+    Tests method roam.
     """
 
     @unittest.mock.patch('random.randint', side_effect=[0,1,2])
-    def testRoam(self,left,mock_random):
+    def testRoam(self,mock_api,mock_random):
 
         """
         Unit test for roam method.
         Asserts that random turning is working as it should.
         """
+
         self.behaviour = Behaviour()
         self.assertEqual(self.behaviour.roam(),'Left turn.')
         self.assertEqual(self.behaviour.roam(),'Right turn.')
@@ -111,6 +117,7 @@ class Fuel:
         self.current_fuel = api.current_fuel()
 
 
+@unittest.mock.patch('solution.api')
 class TestFuel(unittest.TestCase):
 
     """
@@ -118,7 +125,7 @@ class TestFuel(unittest.TestCase):
     Tests delta and update methods.
     """
 
-    def testDelta(self):
+    def testDelta(self,mock_api):
 
         """
         Unit test that asserts delta method subtraction is... subtracting.
@@ -129,20 +136,19 @@ class TestFuel(unittest.TestCase):
         self.fuel.current_fuel = 2
         self.assertEqual(self.fuel.delta(), 1)
 
-    def testUpdate(self):
+    def testUpdate(self,mock_api):
 
         """
         Unit test that asserts update method is updating variables correctly.
         """
 
-        mock = unittest.mock.MagicMock(return_value = 1)
-        with unittest.mock.patch('api.current_fuel', mock):
-            self.fuel = Fuel()
-            self.fuel.current_fuel = 2
-            self.fuel.old_fuel = 3
-            self.fuel.update()
-            self.assertEqual(self.fuel.old_fuel, 2)
-            self.assertEqual(self.fuel.current_fuel, 1)
+        mock_api.current_fuel.return_value = 1
+        self.fuel = Fuel()
+        self.fuel.current_fuel = 2
+        self.fuel.old_fuel = 3
+        self.fuel.update()
+        self.assertEqual(self.fuel.old_fuel, 2)
+        self.assertEqual(self.fuel.current_fuel, 1)
 
 
 class Tank:
@@ -169,9 +175,11 @@ class Tank:
         last hit, false otherwise.
         """
 
-        if not self.fuel.delta():
+        consumed_fuel = self.fuel.delta()
+
+        if not consumed_fuel:
             return False
-        elif self.fuel.delta() < 50:
+        elif consumed_fuel < 50:
             return False
         else:
             return True
@@ -183,8 +191,10 @@ class Tank:
         """
 
         self.fuel.update()
+        self.behaviour.update()
 
 
+@unittest.mock.patch('solution.api')
 class TestTank(unittest.TestCase):
 
     """
@@ -192,27 +202,17 @@ class TestTank(unittest.TestCase):
     Tests damage method.
     """
 
-    def testDamage(self):
+    @unittest.mock.patch('solution.Fuel.delta', side_effect=[None, 5, 55])
+    def testDamage(self, mock_api, mock_delta):
 
         """
         Unit test that asserts damage method is reporting correctly.
         """
 
-        mock = unittest.mock.MagicMock(return_value = 5)
-        with unittest.mock.patch('solution.Fuel.delta', mock):
-            self.tank = Tank()
-            self.assertFalse(self.tank.damage())
-
-        mock = unittest.mock.MagicMock(return_value = 55)
-        with unittest.mock.patch('solution.Fuel.delta', mock):
-            self.tank = Tank()
-            self.assertTrue(self.tank.damage())
-
-        mock = unittest.mock.MagicMock(return_value = None)
-        with unittest.mock.patch('solution.Fuel.delta', mock):
-            self.tank = Tank()
-            self.assertFalse(self.tank.damage())
-
+        self.tank = Tank()
+        self.assertFalse(self.tank.damage())
+        self.assertFalse(self.tank.damage())
+        self.assertTrue(self.tank.damage())
 
 class Solution:
 
