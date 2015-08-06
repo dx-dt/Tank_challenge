@@ -18,7 +18,7 @@ class Fuel:
         """
         Method that returns the fuel difference since last server tick.
         """
-        if self.old_fuel and self.currenf_fuel:
+        if self.old_fuel and self.current_fuel:
             return self.old_fuel - self.current_fuel
         else:
             return None
