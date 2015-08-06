@@ -32,11 +32,11 @@ class Behaviour:
         Method that executes roaming behaviour.
         Placeholder for now.
         """
-
-        if random.randint(0, self.random_limit) == 0:
+        self.random_number = random.randint(0, self.random_limit)
+        if self.random_number == 0:
             api.turn_left()
             return "Left turn."
-        elif random.randint(0, self.random_limit) == 1:
+        elif self.random_number  == 1:
             api.turn_right()
             return "Right turn."
         else:
@@ -53,7 +53,7 @@ class Behaviour:
             self.roam()
             return "Executed roaming method."
 
-
+@unittest.mock.patch('solution.api')
 class testBehaviour(unittest.TestCase):
 
     """
@@ -61,14 +61,18 @@ class testBehaviour(unittest.TestCase):
     Placeholder for now.
     """
 
-    def testRoam(self):
+    @unittest.mock.patch('random.randint', side_effect=[0,1,2])
+    def testRoam(self,left,mock_random):
 
         """
         Unit test for roam method.
-        Placeholder for now.
+        Asserts that random turning is working as it should.
         """
+        self.behaviour = Behaviour()
+        self.assertEqual(self.behaviour.roam(),'Left turn.')
+        self.assertEqual(self.behaviour.roam(),'Right turn.')
+        self.assertEqual(self.behaviour.roam(),'Steady as she goes.')
 
-        pass
 
 class Fuel:
 
