@@ -24,7 +24,7 @@ class Behaviour:
 
         self.current = 'roaming'
         self.turning_ratio = 1/10
-        self.random_limit = 2 * (1/self.turning_ratio)
+        self.random_limit = (1/self.turning_ratio)
 
     def random_turn(self):
 
@@ -55,15 +55,12 @@ class Behaviour:
 
         random_number = random.randint(0, self.random_limit)
 
-        if random_number == 0:
-            api.turn_left()
-            return "Left turn."
-        elif random_number  == 1:
-            api.turn_right()
-            return "Right turn."
-        else:
+        if random_number > 0:
             api.move_forward()
-            return "Steady as she goes."
+            return "No turn"
+        else:
+            self.random_turn()
+            return "Turning"
 
     def update(self):
 
@@ -84,7 +81,7 @@ class testBehaviour(unittest.TestCase):
     Tests method roam.
     """
 
-    @unittest.mock.patch('random.randint', side_effect=[0,1,2])
+    @unittest.mock.patch('random.randint', side_effect=[0,1])
     def testRoam(self,mock_api,mock_random):
 
         """
@@ -93,9 +90,8 @@ class testBehaviour(unittest.TestCase):
         """
 
         self.behaviour = Behaviour()
-        self.assertEqual(self.behaviour.roam(),'Left turn.')
-        self.assertEqual(self.behaviour.roam(),'Right turn.')
-        self.assertEqual(self.behaviour.roam(),'Steady as she goes.')
+        self.assertEqual(self.behaviour.roam(),'Turning')
+        self.assertEqual(self.behaviour.roam(),'No turn')
 
     @unittest.mock.patch('random.choice', side_effect=['left', 'right', 'lol'])
     def testRandom_Turn(self, mock_api, mock_random):
