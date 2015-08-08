@@ -1,4 +1,4 @@
-TESTING = True
+TESTING = False
 
 import api
 import random
@@ -25,6 +25,24 @@ class Behaviour:
         self.current = 'roaming'
         self.turning_ratio = 1/10
         self.random_limit = 2 * (1/self.turning_ratio)
+
+    def random_turn(self):
+
+        """
+        Method that generates a random turn with equal
+        probability to the left or to the right.
+        """
+
+        direction = random.choice(['left', 'right'])
+
+        if direction == 'left':
+            api.turn_left()
+            return "Left turn"
+        elif direction == 'right':
+            api.turn_right()
+            return "Right turn"
+        else:
+            return "No turn"
 
     def roam(self):
 
@@ -78,6 +96,19 @@ class testBehaviour(unittest.TestCase):
         self.assertEqual(self.behaviour.roam(),'Left turn.')
         self.assertEqual(self.behaviour.roam(),'Right turn.')
         self.assertEqual(self.behaviour.roam(),'Steady as she goes.')
+
+    @unittest.mock.patch('random.choice', side_effect=['left', 'right', 'lol'])
+    def testRandom_Turn(self, mock_api, mock_random):
+
+        """
+        Unit test for random_turn method.
+        Asserts the method executes turns as ordered.
+        """
+
+        self.behaviour = Behaviour()
+        self.assertEqual(self.behaviour.random_turn(),'Left turn')
+        self.assertEqual(self.behaviour.random_turn(),'Right turn')
+        self.assertEqual(self.behaviour.random_turn(),'No turn')
 
 
 class Fuel:
