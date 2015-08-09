@@ -1,4 +1,4 @@
-TESTING = False
+TESTING = True
 
 import api
 import random
@@ -44,6 +44,26 @@ class Behaviour:
         else:
             return "No turn"
 
+    def avoid(self):
+
+        """
+        Method executes manouver to avoid collision.
+        Turns the way with the most space.
+        """
+
+        space_to_left = api.lidar_left()
+        space_to_right = api.lidar_right()
+
+        if space_to_left > space_to_right:
+            api.turn_left()
+            return "Left turn"
+        elif space_to_left < space_to_right:
+            api.turn_right()
+            return "Right turn"
+        else:
+            self.random_turn()
+            return "Random turn"
+
     def roam(self):
 
         """
@@ -52,6 +72,12 @@ class Behaviour:
         of turning decided by the turnin ratio from the behaviour
         class.
         """
+
+        space_in_front = api.lidar_front()
+
+        if space_in_front < 2:
+            self.avoid()
+            return "Executed avoidance method"
 
         random_number = random.randint(0, self.random_limit)
 
@@ -72,7 +98,6 @@ class Behaviour:
             self.roam()
             return "Executed roaming method."
 
-
 @unittest.mock.patch('solution.api')
 class testBehaviour(unittest.TestCase):
 
@@ -81,27 +106,47 @@ class testBehaviour(unittest.TestCase):
     Tests method roam.
     """
 
-    @unittest.mock.patch('random.randint', side_effect=[0,1])
-    def testRoam(self,mock_api,mock_random):
+    def testAvoid(self, mock_api):
+
+        mock_api.lidar_left.side_effect = [1,2,3]
+        mock_api.lidar_right.side_effect = [3,2,1]
+
+        self.behaviour = Behaviour()
+
+        self.assertEqual(self.behaviour.avoid(), 'Right turn')
+        self.assertEqual(self.behaviour.avoid(), 'Random turn')
+        self.assertEqual(self.behaviour.avoid(), 'Left turn')
+
+    @unittest.mock.patch('solution.random')
+    @unittest.mock.patch('solution.Behaviour.avoid')
+    def testRoam(self, mock_avoid, mock_random, mock_api):
 
         """
         Unit test for roam method.
         Asserts that random turning is working as it should.
         """
 
+        mock_api.lidar_front.side_effect = [1,2,2]
+        mock_random.randint.side_effect = [0,1]
+
         self.behaviour = Behaviour()
+
+        self.assertEqual(self.behaviour.roam(),'Executed avoidance method')
         self.assertEqual(self.behaviour.roam(),'Turning')
         self.assertEqual(self.behaviour.roam(),'No turn')
 
-    @unittest.mock.patch('random.choice', side_effect=['left', 'right', 'lol'])
-    def testRandom_Turn(self, mock_api, mock_random):
+    @unittest.mock.patch('solution.random')
+    def testRandom_Turn(self, mock_random, mock_api):
 
         """
         Unit test for random_turn method.
         Asserts the method executes turns as ordered.
         """
 
+        mock_random.choice.side_effect=['left', 'right', 'lol']
+
         self.behaviour = Behaviour()
+
         self.assertEqual(self.behaviour.random_turn(),'Left turn')
         self.assertEqual(self.behaviour.random_turn(),'Right turn')
         self.assertEqual(self.behaviour.random_turn(),'No turn')
@@ -159,8 +204,10 @@ class TestFuel(unittest.TestCase):
         """
 
         self.fuel = Fuel()
+
         self.fuel.old_fuel = 3
         self.fuel.current_fuel = 2
+
         self.assertEqual(self.fuel.delta(), 1)
 
     def testUpdate(self,mock_api):
@@ -170,10 +217,14 @@ class TestFuel(unittest.TestCase):
         """
 
         mock_api.current_fuel.return_value = 1
+
         self.fuel = Fuel()
+
         self.fuel.current_fuel = 2
         self.fuel.old_fuel = 3
+
         self.fuel.update()
+
         self.assertEqual(self.fuel.old_fuel, 2)
         self.assertEqual(self.fuel.current_fuel, 1)
 
@@ -229,14 +280,17 @@ class TestTank(unittest.TestCase):
     Tests damage method.
     """
 
-    @unittest.mock.patch('solution.Fuel.delta', side_effect=[None, 5, 55])
-    def testDamage(self, mock_api, mock_delta):
+    @unittest.mock.patch('solution.Fuel.delta')
+    def testDamage(self, mock_delta, mock_api):
 
         """
         Unit test that asserts damage method is reporting correctly.
         """
 
+        mock_delta.side_effect=[None, 5, 55]
+
         self.tank = Tank()
+
         self.assertFalse(self.tank.damage())
         self.assertFalse(self.tank.damage())
         self.assertTrue(self.tank.damage())
