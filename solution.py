@@ -108,6 +108,11 @@ class testBehaviour(unittest.TestCase):
 
     def testAvoid(self, mock_api):
 
+        """
+        Unit test for avoid method.
+        Asserts that correct avoidance manouvers are executed.
+        """
+
         mock_api.lidar_left.side_effect = [1,2,3]
         mock_api.lidar_right.side_effect = [3,2,1]
 
