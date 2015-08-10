@@ -98,6 +98,7 @@ class Behaviour:
             self.roam()
             return "Executed roaming method."
 
+
 @unittest.mock.patch('solution.api')
 class testBehaviour(unittest.TestCase):
 
@@ -299,6 +300,7 @@ class TestTank(unittest.TestCase):
         self.assertFalse(self.tank.damage())
         self.assertFalse(self.tank.damage())
         self.assertTrue(self.tank.damage())
+
 
 class Solution:
 
