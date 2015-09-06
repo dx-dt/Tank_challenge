@@ -1,3 +1,3 @@
 # Tank_challenge
 
-My solution for http://honeypot.softwareskills.se/
+A first attempt at a solution to http://honeypot.softwareskills.se/ written in python
